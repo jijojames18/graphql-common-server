@@ -1,0 +1,29 @@
+{
+  "name": "graphql-common-server",
+  "version": "0.0.0",
+  "description": "Generic Graphql server",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jijojames18/graphql-common-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jijojames18/graphql-common-server/issues"
+  },
+  "homepage": "https://github.com/jijojames18/graphql-common-server#readme",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.11.0",
+    "graphql": "^16.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.4.0",
+    "typescript": "^5.5.4"
+  }
+}
