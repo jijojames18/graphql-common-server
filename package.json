@@ -1,7 +1,7 @@
 {
-  "name": "graphql-common-server",
+  "name": "graphql-server-template",
   "version": "0.0.0",
-  "description": "Generic Graphql server",
+  "description": "Graphql server template",
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jijojames18/graphql-common-server.git"
+    "url": "git+https://github.com/jijojames18/graphql-server-template.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jijojames18/graphql-common-server/issues"
+    "url": "https://github.com/jijojames18/graphql-server-template/issues"
   },
-  "homepage": "https://github.com/jijojames18/graphql-common-server#readme",
+  "homepage": "https://github.com/jijojames18/graphql-server-template#readme",
   "type": "module",
   "dependencies": {
     "@apollo/server": "^4.11.0",
