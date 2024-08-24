@@ -1,11 +1,16 @@
+enum FilterType {
+  email
+  phoneNumber
+}
+
 type Query {
-  users(filter: String): [User]
+  users(type: FilterType, needle: String): [User]
 }
 
 type Mutation {
   createUser(name: String!, email: String!, phoneNumber: String!): User
   updateUser(name: String!, email: String!, phoneNumber: String!): User
-  deleteUser(name: String!, email: String!, phoneNumber: String!): User
+  deleteUser(email: String!): Boolean
 }
 
 type User {
@@ -13,5 +18,5 @@ type User {
   name: String!
   email: String!
   phoneNumber: String!
-  createdAt: String!
+  createdAt: Int!
 }

@@ -16,10 +16,69 @@ const pool = mysql.createPool({
 
 export async function executeQuery(query, params = []) {
   try {
-    const [rows, fields] = await pool.execute(query, params);
+    const [rows] = await pool.execute(query, params);
     return rows;
   } catch (err) {
     console.error("Database query error:", err);
     throw err;
   }
+}
+
+export async function searchUserByEmail(needle) {
+  const query = `
+      SELECT * FROM User
+      WHERE email = ?
+    `;
+  return await executeQuery(query, [needle]);
+}
+
+export async function searchUserByNumber(needle) {
+  const query = `
+      SELECT * FROM User
+      WHERE phone_number = ?
+    `;
+  return await executeQuery(query, [needle]);
+}
+
+export async function fetchAllUsers() {
+  const query = `
+      SELECT * FROM User
+    `;
+  return await executeQuery(query);
+}
+
+export async function insertUser(email, name, phoneNumber) {
+  const query = `
+      INSERT INTO User (name, email, phone_number, created_at)
+      VALUES (?, ?, ?, ?)
+    `;
+  const epochTimeInSeconds = Math.floor(Date.now() / 1000);
+  return await executeQuery(query, [
+    name,
+    email,
+    phoneNumber,
+    epochTimeInSeconds,
+  ]);
+}
+
+export async function updateUser(email, name, phoneNumber) {
+  const query = `
+      UPDATE User
+      SET name = ?, phone_number = ?
+      WHERE email = ?
+    `;
+  return await executeQuery(query, [name, phoneNumber, email]);
+}
+
+export async function deleteUser(email) {
+  const query = `
+      DELETE FROM User
+      WHERE email = ?
+    `;
+  return await executeQuery(query, [email]);
+}
+
+export async function queryUserByEmailAfterUpdate(email) {
+  const queryResult = await searchUserByEmail(email);
+  return queryResult[0];
 }

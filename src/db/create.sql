@@ -6,14 +6,14 @@ CREATE TABLE User (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone_number VARCHAR(15),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at INT NOT NULL
 );
 
 /**
 *** Add dummy users
 **/
-INSERT INTO User (name, email, phone_number)
+INSERT INTO User (name, email, phone_number, created_at)
 VALUES
-('Alice Johnson', 'alice@example.com', '1234567890'),
-('Bob Smith', 'bob@example.com', '0987654321'),
-('Charlie Brown', 'charlie@example.com', '5551234567');
+('Alice Johnson', 'alice@example.com', '1234567890', 1724508040),
+('Bob Smith', 'bob@example.com', '0987654321', 1724508041),
+('Charlie Brown', 'charlie@example.com', '5551234567', 1724508042);

@@ -7,6 +7,8 @@ import { buildSubgraphSchema } from "@apollo/subgraph";
 import { expressMiddleware } from "@apollo/server/express4";
 import { readFileSync } from "fs";
 
+import { resolvers } from "./resolvers.js";
+
 const PORT = process.env.PORT || 5050;
 const app = express();
 
@@ -20,7 +22,7 @@ const typeDefs = gql(
 );
 
 const server = new ApolloServer({
-  schema: buildSubgraphSchema({ typeDefs, resolvers: {} }),
+  schema: buildSubgraphSchema({ typeDefs, resolvers }),
 });
 
 await server.start();
