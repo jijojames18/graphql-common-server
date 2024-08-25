@@ -1,3 +1,5 @@
+import { Resolvers } from "./generated/graphql.js";
+
 import { GraphQLError } from "graphql";
 
 import {
@@ -17,7 +19,7 @@ import {
   checkIfValidUser,
 } from "./validators.js";
 
-const resolvers = {
+const resolvers: Resolvers = {
   Query: {
     async users(parent, { type, needle }, { user }) {
       if (checkIfValidUser(user)) {

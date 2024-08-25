@@ -4,9 +4,10 @@
   "description": "Graphql server template",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc",
+    "compile": "npm run codegen && tsc",
     "start": "tsc && node ./dist/index.js",
-    "dev": "nodemon"
+    "dev": "npm run codegen && nodemon",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "repository": {
     "type": "git",
@@ -30,8 +31,12 @@
     "mysql2": "^3.11.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/typescript": "4.0.9",
+    "@graphql-codegen/typescript-resolvers": "4.2.1",
     "@types/node": "^22.4.0",
     "nodemon": "^3.1.4",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@graphql-codegen/introspection": "4.0.3"
   }
 }

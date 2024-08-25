@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { GraphQLError } from "graphql";
 
 import { ERROR_IN_QUERY_CODE, ERROR_IN_QUERY_MESSAGE } from "../constants.js";
+import { UserEntity } from "../types.js";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ const pool = mysql.createPool({
 export async function executeQuery(
   query: string,
   params: Array<string | number> = []
-): Promise<QueryResult> {
+) {
   try {
     const [rows] = await pool.execute(query, params);
     return rows;
@@ -32,27 +33,27 @@ export async function executeQuery(
   }
 }
 
-export async function searchUserByEmail(needle: string): Promise<QueryResult> {
+export async function searchUserByEmail(needle: string) {
   const query = `
       SELECT * FROM User
       WHERE email = ?
     `;
-  return await executeQuery(query, [needle]);
+  return (await executeQuery(query, [needle])) as Array<UserEntity>;
 }
 
-export async function searchUserByNumber(needle: string): Promise<QueryResult> {
+export async function searchUserByNumber(needle: string) {
   const query = `
       SELECT * FROM User
       WHERE phone_number = ?
     `;
-  return await executeQuery(query, [needle]);
+  return (await executeQuery(query, [needle])) as Array<UserEntity>;
 }
 
-export async function fetchAllUsers(): Promise<QueryResult> {
+export async function fetchAllUsers() {
   const query = `
       SELECT * FROM User
     `;
-  return await executeQuery(query);
+  return (await executeQuery(query)) as Array<UserEntity>;
 }
 
 export async function insertUser(
@@ -94,9 +95,7 @@ export async function deleteUser(email: string): Promise<QueryResult> {
   return await executeQuery(query, [email]);
 }
 
-export async function queryUserByEmailAfterUpdate(
-  email: string
-): Promise<QueryResult> {
+export async function queryUserByEmailAfterUpdate(email: string) {
   const queryResult = await searchUserByEmail(email);
   return queryResult[0];
 }

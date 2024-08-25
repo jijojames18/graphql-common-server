@@ -1,6 +1,6 @@
 enum FilterType {
   email
-  phoneNumber
+  phone_number
 }
 
 type Query {
@@ -14,7 +14,7 @@ type Mutation {
 }
 
 type User {
-  id: ID
+  id: ID!
   name: String!
   email: String!
   phoneNumber: String!
