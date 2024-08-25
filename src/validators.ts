@@ -52,3 +52,16 @@ export const checkIfValidName = (name: string): boolean | void => {
   }
   return true;
 };
+
+export const checkIfValidPaginationParams = (
+  limit: number,
+  offset: number
+): boolean | void => {
+  if (limit && !Number.isInteger(limit)) {
+    throwInputError("limit");
+  }
+  if (offset && !Number.isInteger(offset)) {
+    throwInputError("offset");
+  }
+  return true;
+};

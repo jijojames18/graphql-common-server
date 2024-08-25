@@ -1,7 +1,5 @@
 import { Resolvers } from "./generated/graphql.js";
 
-import { GraphQLError } from "graphql";
-
 import {
   insertUser,
   searchUserByEmail,
@@ -9,23 +7,21 @@ import {
   fetchAllUsers,
   updateUser,
   deleteUser,
-  queryUserByEmailAfterUpdate,
+  getUserCount,
 } from "./db/index.js";
-import { INVALID_PARAM_CODE, INVALID_PARAM_MESSAGE } from "./constants.js";
 import {
   checkIfValidEmail,
   checkIfValidName,
   checkIfValidPhoneNumber,
   checkIfValidUser,
+  checkIfValidPaginationParams,
 } from "./validators.js";
 
 const resolvers: Resolvers = {
   Query: {
-    async users(parent, { type, needle }, { user }) {
+    async getUser(parent, { type, needle }, { user }) {
       if (checkIfValidUser(user)) {
-        if (!needle && !type) {
-          return await fetchAllUsers();
-        } else if (type === "email") {
+        if (type === "email") {
           if (checkIfValidEmail(needle)) {
             return await searchUserByEmail(needle);
           }
@@ -33,18 +29,20 @@ const resolvers: Resolvers = {
           if (checkIfValidPhoneNumber(needle)) {
             return await searchUserByNumber(needle);
           }
-        } else if (type) {
-          throw new GraphQLError(
-            INVALID_PARAM_MESSAGE.replace("{PARAM}", "type"),
-            {
-              extensions: {
-                code: INVALID_PARAM_CODE,
-              },
-            }
-          );
         }
-
-        return [];
+      }
+    },
+    async getAll(parent, { limit, offset }, { user }) {
+      if (
+        checkIfValidUser(user) &&
+        checkIfValidPaginationParams(limit, offset)
+      ) {
+        const users = await fetchAllUsers(limit, offset);
+        const totalCount = await getUserCount();
+        return {
+          totalCount,
+          users,
+        };
       }
     },
   },
@@ -61,7 +59,7 @@ const resolvers: Resolvers = {
         checkIfValidPhoneNumber(phoneNumber)
       ) {
         await insertUser(email, name, phoneNumber);
-        return await queryUserByEmailAfterUpdate(email);
+        return await searchUserByEmail(email);
       }
     },
     async updateUser(parent, { name, email, phoneNumber }, { user }) {
@@ -72,7 +70,7 @@ const resolvers: Resolvers = {
         checkIfValidPhoneNumber(phoneNumber)
       ) {
         await updateUser(email, name, phoneNumber);
-        return await queryUserByEmailAfterUpdate(email);
+        return await searchUserByEmail(email);
       }
     },
     async deleteUser(parent, { email }, { user }) {

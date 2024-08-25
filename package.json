@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "npm run codegen && tsc",
-    "start": "tsc && node ./dist/index.js",
+    "start": "tsc && node ./dist/src/index.js",
     "dev": "npm run codegen && nodemon",
     "codegen": "graphql-codegen --config codegen.ts"
   },

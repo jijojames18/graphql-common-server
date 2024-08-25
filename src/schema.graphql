@@ -4,7 +4,8 @@ enum FilterType {
 }
 
 type Query {
-  users(type: FilterType, needle: String): [User]
+  getUser(type: FilterType, needle: String): User
+  getAll(limit: Int, offset: Int): UserList
 }
 
 type Mutation {
@@ -19,4 +20,9 @@ type User {
   email: String!
   phoneNumber: String!
   createdAt: Int!
+}
+
+type UserList {
+  users: [User!]!
+  totalCount: Int!
 }

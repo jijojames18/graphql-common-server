@@ -33,12 +33,21 @@ export async function executeQuery(
   }
 }
 
+export async function getUserCount() {
+  const query = `
+    SELECT count(*) AS user_count from User
+  `;
+  const result = await executeQuery(query);
+  return (result && result[0] && result[0]["user_count"]) || 0;
+}
+
 export async function searchUserByEmail(needle: string) {
   const query = `
       SELECT * FROM User
       WHERE email = ?
     `;
-  return (await executeQuery(query, [needle])) as Array<UserEntity>;
+  const result = (await executeQuery(query, [needle])) as Array<UserEntity>;
+  return result[0];
 }
 
 export async function searchUserByNumber(needle: string) {
@@ -46,14 +55,18 @@ export async function searchUserByNumber(needle: string) {
       SELECT * FROM User
       WHERE phone_number = ?
     `;
-  return (await executeQuery(query, [needle])) as Array<UserEntity>;
+  const result = (await executeQuery(query, [needle])) as Array<UserEntity>;
+  return result[0];
 }
 
-export async function fetchAllUsers() {
+export async function fetchAllUsers(limit = 10, offset = 0) {
   const query = `
       SELECT * FROM User
+      ORDER BY created_at desc
+      LIMIT ?
+      OFFSET ?
     `;
-  return (await executeQuery(query)) as Array<UserEntity>;
+  return (await executeQuery(query, [limit, offset])) as Array<UserEntity>;
 }
 
 export async function insertUser(
@@ -93,9 +106,4 @@ export async function deleteUser(email: string): Promise<QueryResult> {
       WHERE email = ?
     `;
   return await executeQuery(query, [email]);
-}
-
-export async function queryUserByEmailAfterUpdate(email: string) {
-  const queryResult = await searchUserByEmail(email);
-  return queryResult[0];
 }
