@@ -47,7 +47,13 @@ const context = async ({ req }) => {
   return {};
 };
 
-const server = new ApolloServer({ typeDefs, resolvers, context });
+const formatError = (error) => {
+  console.log(error);
+  // Can manipulate error here if needed
+  return error;
+};
+
+const server = new ApolloServer({ typeDefs, resolvers, context, formatError });
 
 await server.start();
 

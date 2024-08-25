@@ -1,9 +1,11 @@
-import mysql from "mysql2/promise";
+import mysql, { QueryResult } from "mysql2/promise";
 import dotenv from "dotenv";
+import { GraphQLError } from "graphql";
+
+import { ERROR_IN_QUERY_CODE, ERROR_IN_QUERY_MESSAGE } from "../constants.js";
 
 dotenv.config();
 
-// Create DB pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -14,17 +16,23 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-export async function executeQuery(query, params = []) {
+export async function executeQuery(
+  query: string,
+  params: Array<string | number> = []
+): Promise<QueryResult> {
   try {
     const [rows] = await pool.execute(query, params);
     return rows;
   } catch (err) {
-    console.error("Database query error:", err);
-    throw err;
+    throw new GraphQLError(ERROR_IN_QUERY_MESSAGE, {
+      extensions: {
+        code: ERROR_IN_QUERY_CODE,
+      },
+    });
   }
 }
 
-export async function searchUserByEmail(needle) {
+export async function searchUserByEmail(needle: string): Promise<QueryResult> {
   const query = `
       SELECT * FROM User
       WHERE email = ?
@@ -32,7 +40,7 @@ export async function searchUserByEmail(needle) {
   return await executeQuery(query, [needle]);
 }
 
-export async function searchUserByNumber(needle) {
+export async function searchUserByNumber(needle: string): Promise<QueryResult> {
   const query = `
       SELECT * FROM User
       WHERE phone_number = ?
@@ -40,14 +48,18 @@ export async function searchUserByNumber(needle) {
   return await executeQuery(query, [needle]);
 }
 
-export async function fetchAllUsers() {
+export async function fetchAllUsers(): Promise<QueryResult> {
   const query = `
       SELECT * FROM User
     `;
   return await executeQuery(query);
 }
 
-export async function insertUser(email, name, phoneNumber) {
+export async function insertUser(
+  email: string,
+  name: string,
+  phoneNumber: string
+): Promise<QueryResult> {
   const query = `
       INSERT INTO User (name, email, phone_number, created_at)
       VALUES (?, ?, ?, ?)
@@ -61,7 +73,11 @@ export async function insertUser(email, name, phoneNumber) {
   ]);
 }
 
-export async function updateUser(email, name, phoneNumber) {
+export async function updateUser(
+  email: string,
+  name: string,
+  phoneNumber: string
+): Promise<QueryResult> {
   const query = `
       UPDATE User
       SET name = ?, phone_number = ?
@@ -70,7 +86,7 @@ export async function updateUser(email, name, phoneNumber) {
   return await executeQuery(query, [name, phoneNumber, email]);
 }
 
-export async function deleteUser(email) {
+export async function deleteUser(email: string): Promise<QueryResult> {
   const query = `
       DELETE FROM User
       WHERE email = ?
@@ -78,7 +94,9 @@ export async function deleteUser(email) {
   return await executeQuery(query, [email]);
 }
 
-export async function queryUserByEmailAfterUpdate(email) {
+export async function queryUserByEmailAfterUpdate(
+  email: string
+): Promise<QueryResult> {
   const queryResult = await searchUserByEmail(email);
   return queryResult[0];
 }

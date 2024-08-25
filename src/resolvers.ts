@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+
 import {
   insertUser,
   searchUserByEmail,
@@ -7,13 +9,13 @@ import {
   deleteUser,
   queryUserByEmailAfterUpdate,
 } from "./db/index.js";
-
-const checkIfValidUser = (user) => {
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
-  return true;
-};
+import { INVALID_PARAM_CODE, INVALID_PARAM_MESSAGE } from "./constants.js";
+import {
+  checkIfValidEmail,
+  checkIfValidName,
+  checkIfValidPhoneNumber,
+  checkIfValidUser,
+} from "./validators.js";
 
 const resolvers = {
   Query: {
@@ -22,9 +24,22 @@ const resolvers = {
         if (!needle && !type) {
           return await fetchAllUsers();
         } else if (type === "email") {
-          return await searchUserByEmail(needle);
+          if (checkIfValidEmail(needle)) {
+            return await searchUserByEmail(needle);
+          }
         } else if (type === "phone_number") {
-          return await searchUserByNumber(needle);
+          if (checkIfValidPhoneNumber(needle)) {
+            return await searchUserByNumber(needle);
+          }
+        } else if (type) {
+          throw new GraphQLError(
+            INVALID_PARAM_MESSAGE.replace("{PARAM}", "type"),
+            {
+              extensions: {
+                code: INVALID_PARAM_CODE,
+              },
+            }
+          );
         }
 
         return [];
@@ -37,19 +52,29 @@ const resolvers = {
   },
   Mutation: {
     async createUser(parent, { name, email, phoneNumber }, { user }) {
-      if (checkIfValidUser(user)) {
+      if (
+        checkIfValidUser(user) &&
+        checkIfValidName(name) &&
+        checkIfValidEmail(email) &&
+        checkIfValidPhoneNumber(phoneNumber)
+      ) {
         await insertUser(email, name, phoneNumber);
         return await queryUserByEmailAfterUpdate(email);
       }
     },
     async updateUser(parent, { name, email, phoneNumber }, { user }) {
-      if (checkIfValidUser(user)) {
+      if (
+        checkIfValidUser(user) &&
+        checkIfValidName(name) &&
+        checkIfValidEmail(email) &&
+        checkIfValidPhoneNumber(phoneNumber)
+      ) {
         await updateUser(email, name, phoneNumber);
         return await queryUserByEmailAfterUpdate(email);
       }
     },
     async deleteUser(parent, { email }, { user }) {
-      if (checkIfValidUser(user)) {
+      if (checkIfValidUser(user) && checkIfValidEmail(email)) {
         await deleteUser(email);
         return true;
       }
