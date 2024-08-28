@@ -51,7 +51,11 @@ const resolvers: Resolvers = {
     createdAt: (parent) => parent["created_at"],
   },
   Mutation: {
-    async createUser(parent, { name, email, phoneNumber }, { user }) {
+    async createUser(
+      parent,
+      { input: { name, email, phoneNumber } },
+      { user }
+    ) {
       if (
         checkIfValidUser(user) &&
         checkIfValidName(name) &&
@@ -62,7 +66,11 @@ const resolvers: Resolvers = {
         return await searchUserByEmail(email);
       }
     },
-    async updateUser(parent, { name, email, phoneNumber }, { user }) {
+    async updateUser(
+      parent,
+      { input: { name, email, phoneNumber } },
+      { user }
+    ) {
       if (
         checkIfValidUser(user) &&
         checkIfValidName(name) &&

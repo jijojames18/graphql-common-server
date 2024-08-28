@@ -3,14 +3,20 @@ enum FilterType {
   phone_number
 }
 
+input UserInput {
+  name: String!
+  email: String!
+  phoneNumber: String!
+}
+
 type Query {
   getUser(type: FilterType, needle: String): User
   getAll(limit: Int, offset: Int): UserList
 }
 
 type Mutation {
-  createUser(name: String!, email: String!, phoneNumber: String!): User
-  updateUser(name: String!, email: String!, phoneNumber: String!): User
+  createUser(input: UserInput!): UserUpdateResponse
+  updateUser(input: UserInput!): UserUpdateResponse
   deleteUser(email: String!): Boolean
 }
 
@@ -25,4 +31,10 @@ type User {
 type UserList {
   users: [User!]!
   totalCount: Int!
+}
+
+type UserUpdateResponse {
+  code: Int!
+  message: String!
+  user: User
 }
