@@ -41,4 +41,5 @@ Generates types for GraphQL schema.
 ## References
 - [GraphQL](https://graphql.org/)
 - [Apollo Server](https://www.apollographql.com/docs/apollo-server/)
+- [DataLoader(for caching)](https://github.com/graphql/dataloader)
 
